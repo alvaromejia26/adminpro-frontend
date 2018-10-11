@@ -20,6 +20,21 @@ export class UsuarioService {
     this.cargarStorage();
   }
 
+  renuevaToken() {
+    let url = URL_SERVICIOS + '/login/renuevatoken';
+    url += '?token=' + this.token;
+    return this.http.get(url).pipe(map((resp: any) => {
+      this.token = resp.token;
+      localStorage.setItem('token', this.token);
+      console.log('token renovado');
+      return true;
+    }), catchError(err => {
+      swal('No se pudo renovar el Token', 'No fue posible renovar el Token', 'error');
+      this.router.navigate(['/login']);
+      return throwError(err);
+    }));
+  }
+
   loginGoogle (token: string) {
     const url = URL_SERVICIOS + '/login/google';
     return this.http.post(url, { token }).pipe(map((resp: any) => {
